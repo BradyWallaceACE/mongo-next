@@ -24,6 +24,7 @@ export default function Home() {
     axios.get(`/api/get_task`).then((res) => {
       setTask(res.data);
       console.log(res.data);
+      setUpdateUI(false);
     });
   }, [updateUI]);
 
