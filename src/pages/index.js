@@ -1,29 +1,42 @@
+// npm i mongoose
+// npm i axios
+
 import Head from "next/head";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
 export default function Home() {
+  // useStates for various page functions
+  // Input is form input
+  // Task is the tasks retrieved from the DB
+  // UpdateUI updates the UI to show new tasks
   const [input, setInput] = useState("");
   const [task, setTask] = useState([]);
   const [updateUI, setUpdateUI] = useState(false);
 
+  // Posting a new task
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Use axios to send post to set_task api
     axios
       .post(`/api/set_task`, { task: input })
       .then((res) => {
         console.log(res);
+        // Set input and updateUI useStates
         setInput("");
         setUpdateUI(true);
       })
+      //Handle error
       .catch((err) => console.log(err));
   };
 
+  // Fetching tasks
   useEffect(() => {
     axios.get(`/api/get_task`).then((res) => {
       setTask(res.data);
       console.log(res.data);
+      // Update the UI to show new task
       setUpdateUI(false);
     });
   }, [updateUI]);
@@ -48,9 +61,12 @@ export default function Home() {
         </form>
 
         <ul>
-          {task.map((t) => (
-            <li key={t._id}>{t.task}</li>
-          ))}
+          {
+            // Map the tasks to a list of their names
+            task.map((t) => (
+              <li key={t._id}>{t.task}</li>
+            ))
+          }
         </ul>
       </main>
     </>
