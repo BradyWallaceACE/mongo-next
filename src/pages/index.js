@@ -1,9 +1,32 @@
 import Head from "next/head";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function Home() {
+  const [input, setInput] = useState("");
+  const [task, setTask] = useState([]);
+  const [updateUI, setUpdateUI] = useState(false);
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    axios
+      .post(`/api/set_task`, { task: input })
+      .then((res) => {
+        console.log(res);
+        setInput("");
+        setUpdateUI(true);
+      })
+      .catch((err) => console.log(err));
   };
+
+  useEffect(() => {
+    axios.get(`/api/get_task`).then((res) => {
+      setTask(res.data);
+      console.log(res.data);
+    });
+  }, [updateUI]);
+
   return (
     <>
       <Head>
@@ -15,13 +38,18 @@ export default function Home() {
 
       <main>
         <form onSubmit={handleSubmit}>
-          <input type="text" />
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+          />
           <button tpye="submit">Send</button>
         </form>
 
         <ul>
-          <li>Hi</li>
-          <li>There!</li>
+          {task.map((t) => (
+            <li key={t._id}>{t.task}</li>
+          ))}
         </ul>
       </main>
     </>
